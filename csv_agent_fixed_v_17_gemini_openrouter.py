@@ -183,29 +183,29 @@ Sua tarefa: gerar frase em pt de dados: {formatted_result}"""
             # Cria diretório temporário
             temp_dir = tempfile.mkdtemp()
             
-        try:
-            if uploaded_file.name.endswith('.zip'):
-                # Salva arquivo ZIP
-                zip_path = os.path.join(temp_dir, uploaded_file.name)
-                with open(zip_path, 'wb') as f:
-                    f.write(uploaded_file.getbuffer())
+            try:
+                if uploaded_file.name.endswith('.zip'):
+                    # Salva arquivo ZIP
+                    zip_path = os.path.join(temp_dir, uploaded_file.name)
+                    with open(zip_path, 'wb') as f:
+                        f.write(uploaded_file.getbuffer())
                     
-                # Descompacta
-                extract_dir = os.path.join(temp_dir, 'extracted')
-                if agent.extract_zip_files(zip_path, extract_dir):
-                    # Carrega CSVs
-                    agent.dataframes = agent.load_csv_files(extract_dir)
-            else:
-                # Arquivo CSV individual
-                csv_path = os.path.join(temp_dir, uploaded_file.name)
-                with open(csv_path, 'wb') as f:
-                    f.write(uploaded_file.getbuffer())
-                 agent.dataframes = agent.load_csv_files(temp_dir)
+                    # Descompacta
+                    extract_dir = os.path.join(temp_dir, 'extracted')
+                    if agent.extract_zip_files(zip_path, extract_dir):
+                       # Carrega CSVs
+                       agent.dataframes = agent.load_csv_files(extract_dir)
+                else:
+                    # Arquivo CSV individual
+                    csv_path = os.path.join(temp_dir, uploaded_file.name)
+                    with open(csv_path, 'wb') as f:
+                        f.write(uploaded_file.getbuffer())
+                    agent.dataframes = agent.load_csv_files(temp_dir)
                 
-            st.success(f"Carregados {len(agent.dataframes)} arquivo(s) CSV")
+                st.success(f"Carregados {len(agent.dataframes)} arquivo(s) CSV")
                 
-        except Exception as e:
-            st.error(f"Erro ao processar arquivo: {e}")
+            except Exception as e:
+                st.error(f"Erro ao processar arquivo: {e}")
     
     # Interface principal
     if agent.dataframes:
@@ -259,9 +259,9 @@ Sua tarefa: gerar frase em pt de dados: {formatted_result}"""
         with col2:
             st.header("💬 Faça sua Pergunta")
             
-             # Estatísticas rápidas
+            # Estatísticas rápidas
             if selected_file:
-                 stats = agent.get_quick_stats(selected_file)
+                stats = agent.get_quick_stats(selected_file)
                 st.info(f"📊 **Dataset atual:** {stats['total_rows']} linhas × {stats['total_columns']} colunas")
             
             # Alerta sobre correção
