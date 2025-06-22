@@ -166,83 +166,83 @@ Sua tarefa: gerar frase em pt de dados: {formatted_result}"""
     if 'agent' not in st.session_state:
             st.session_state.agent = CSVAnalysisAgent()
     
-        agent = st.session_state.agent
+    agent = st.session_state.agent
     
-        # Sidebar para upload e configuração
+    # Sidebar para upload e configuração
     with st.sidebar:
         st.header("📁 Carregar Dados")
         
         # Upload de arquivo
         uploaded_file = st.file_uploader(
-        "Faça upload de arquivo ZIP ou CSV",
-        type=['zip', 'csv'],
-        help="Aceita arquivos ZIP contendo CSVs ou arquivos CSV individuais"
+            "Faça upload de arquivo ZIP ou CSV",
+            type=['zip', 'csv'],
+            help="Aceita arquivos ZIP contendo CSVs ou arquivos CSV individuais"
         )
         
     if uploaded_file:
             # Cria diretório temporário
             temp_dir = tempfile.mkdtemp()
             
-    try:
-        if uploaded_file.name.endswith('.zip'):
-            # Salva arquivo ZIP
-            zip_path = os.path.join(temp_dir, uploaded_file.name)
-        with open(zip_path, 'wb') as f:
-            f.write(uploaded_file.getbuffer())
+        try:
+            if uploaded_file.name.endswith('.zip'):
+                # Salva arquivo ZIP
+                zip_path = os.path.join(temp_dir, uploaded_file.name)
+                with open(zip_path, 'wb') as f:
+                    f.write(uploaded_file.getbuffer())
                     
-            # Descompacta
-            extract_dir = os.path.join(temp_dir, 'extracted')
-        if agent.extract_zip_files(zip_path, extract_dir):
-            # Carrega CSVs
-            agent.dataframes = agent.load_csv_files(extract_dir)
-        else:
-            # Arquivo CSV individual
-            csv_path = os.path.join(temp_dir, uploaded_file.name)
-        with open(csv_path, 'wb') as f:
-            f.write(uploaded_file.getbuffer())
-            agent.dataframes = agent.load_csv_files(temp_dir)
+                # Descompacta
+                extract_dir = os.path.join(temp_dir, 'extracted')
+                if agent.extract_zip_files(zip_path, extract_dir):
+                    # Carrega CSVs
+                    agent.dataframes = agent.load_csv_files(extract_dir)
+            else:
+                # Arquivo CSV individual
+                csv_path = os.path.join(temp_dir, uploaded_file.name)
+                with open(csv_path, 'wb') as f:
+                    f.write(uploaded_file.getbuffer())
+                 agent.dataframes = agent.load_csv_files(temp_dir)
                 
-        st.success(f"Carregados {len(agent.dataframes)} arquivo(s) CSV")
+            st.success(f"Carregados {len(agent.dataframes)} arquivo(s) CSV")
                 
         except Exception as e:
-        st.error(f"Erro ao processar arquivo: {e}")
+            st.error(f"Erro ao processar arquivo: {e}")
     
-        # Interface principal
-        if agent.dataframes:
-            col1, col2 = st.columns([1, 2])
+    # Interface principal
+    if agent.dataframes:
+        col1, col2 = st.columns([1, 2])
         
-            with col1:
-                st.header("📋 Arquivos Disponíveis")
+        with col1:
+            st.header("📋 Arquivos Disponíveis")
             
-                # Seleção de arquivo
-                selected_file = st.selectbox(
-                    "Escolha um arquivo para analisar:",
-                    list(agent.dataframes.keys())
-                )
+            # Seleção de arquivo
+            selected_file = st.selectbox(
+                "Escolha um arquivo para analisar:",
+                list(agent.dataframes.keys())
+            )
             
-                if selected_file:
-                    agent.select_dataframe(selected_file)
+            if selected_file:
+                agent.select_dataframe(selected_file)
                 
-                    # Mostra informações do arquivo
-                    with st.expander("ℹ️ Informações do Arquivo"):
-                        info = agent.get_dataframe_info(selected_file)
-                        stats = agent.get_quick_stats(selected_file)
+                # Mostra informações do arquivo
+                with st.expander("ℹ️ Informações do Arquivo"):
+                    info = agent.get_dataframe_info(selected_file)
+                    stats = agent.get_quick_stats(selected_file)
                     
-                        st.write(f"**Dimensões:** {info['shape'][0]} linhas × {info['shape'][1]} colunas")
-                        st.write(f"**Linhas totais:** {stats['total_rows']}")
-                        st.write(f"**Colunas numéricas:** {stats['numeric_columns']}")
-                        st.write(f"**Colunas de texto:** {stats['text_columns']}")
-                        st.write(f"**Valores nulos:** {stats['null_values']}")
-                        st.write(f"**Linhas duplicadas:** {stats['duplicated_rows']}")
+                    st.write(f"**Dimensões:** {info['shape'][0]} linhas × {info['shape'][1]} colunas")
+                    st.write(f"**Linhas totais:** {stats['total_rows']}")
+                    st.write(f"**Colunas numéricas:** {stats['numeric_columns']}")
+                    st.write(f"**Colunas de texto:** {stats['text_columns']}")
+                    st.write(f"**Valores nulos:** {stats['null_values']}")
+                    st.write(f"**Linhas duplicadas:** {stats['duplicated_rows']}")
                     
-                        st.write("**Colunas:**")
-                        for col in info['columns']:
-                            st.write(f"- {col}")
+                    st.write("**Colunas:**")
+                    for col in info['columns']:
+                        st.write(f"- {col}")
                 
-                    # Análise das colunas para debug
-                    with st.expander("🔍 Análise das Colunas"):
-                        col_analysis = agent.get_column_analysis(selected_file)
-                        if col_analysis:
+                 # Análise das colunas para debug
+                with st.expander("🔍 Análise das Colunas"):
+                    col_analysis = agent.get_column_analysis(selected_file)
+                    if col_analysis:
                         for col, details in col_analysis.items():
                             st.write(f"**{col}:**")
                             st.write(f"  - Tipo: {details['tipo']}")
@@ -251,98 +251,99 @@ Sua tarefa: gerar frase em pt de dados: {formatted_result}"""
                             st.write(f"  - Exemplo: {details['exemplo']}")
                             st.write("---")
                 
-                    # Preview dos dados
-                    with st.expander("👀 Preview dos Dados (5 primeiras linhas)"):
-                        st.dataframe(agent.current_df.head())
-                        st.caption(f"Mostrando 5 de {len(agent.current_df)} linhas totais")
+                # Preview dos dados
+                with st.expander("👀 Preview dos Dados (5 primeiras linhas)"):
+                    st.dataframe(agent.current_df.head())
+                    st.caption(f"Mostrando 5 de {len(agent.current_df)} linhas totais")
         
-            with col2:
-                st.header("💬 Faça sua Pergunta")
+        with col2:
+            st.header("💬 Faça sua Pergunta")
             
-                # Estatísticas rápidas
-                if selected_file:
-                    stats = agent.get_quick_stats(selected_file)
-                    st.info(f"📊 **Dataset atual:** {stats['total_rows']} linhas × {stats['total_columns']} colunas")
+             # Estatísticas rápidas
+            if selected_file:
+                 stats = agent.get_quick_stats(selected_file)
+                st.info(f"📊 **Dataset atual:** {stats['total_rows']} linhas × {stats['total_columns']} colunas")
             
-                # Alerta sobre correção
-                st.info("💡 **Correção aplicada:** Sistema otimizado para usar valores reais do dataset!")
+            # Alerta sobre correção
+            st.info("💡 **Correção aplicada:** Sistema otimizado para usar valores reais do dataset!")
             
-                # Explicação do processo
-                st.markdown("""
-                **🔄 Como funciona:**
-                1. **Interpretação:** LLM entende sua pergunta e gera código Python
-                2. **Execução:** Código é executado no dataset real
-                3. **Resposta:** LLM transforma o resultado em resposta clara
-                """)
+            # Explicação do processo
+            st.markdown("""
+            **🔄 Como funciona:**
+            1. **Interpretação:** LLM entende sua pergunta e gera código Python
+            2. **Execução:** Código é executado no dataset real
+            3. **Resposta:** LLM transforma o resultado em resposta clara
+            """)
             
-                # Exemplos de perguntas
-                st.write("**Exemplos de perguntas:**")
-                examples = [
-                    "Quantas linhas tem o dataset?",
-                    "Qual produto tem o maior valor unitário?",
-                    "Qual fornecedor teve maior montante recebido?",
-                    "Qual item teve maior volume entregue?",
-                    "Mostre o top 5 produtos por quantidade",
-                    "Qual a soma total dos valores?",
-                    "Quantos fornecedores únicos existem?"
-                ]
+            # Exemplos de perguntas
+            st.write("**Exemplos de perguntas:**")
+            examples = [
+                "Quantas linhas tem o dataset?",
+                "Qual produto tem o maior valor unitário?",
+                "Qual fornecedor teve maior montante recebido?",
+                "Qual item teve maior volume entregue?",
+                "Mostre o top 5 produtos por quantidade",
+                "Qual a soma total dos valores?",
+                "Quantos fornecedores únicos existem?"
+            ]
             
-                for example in examples:
-                    if st.button(example, key=f"ex_{example}"):
-                       st.session_state.question = example
+            for example in examples:
+                if st.button(example, key=f"ex_{example}"):
+                    st.session_state.question = example
             
-                # Input da pergunta
-                question = st.text_area(
-                    "Sua pergunta:",
-                    value=st.session_state.get('question', ''),
-                    height=100,
-                    placeholder="Digite sua pergunta sobre os dados..."
-                )
-                if st.button("🔍 Analisar", type="primary"):
-                    if question:
-                        with st.spinner("🤖 Agente pensando... (Etapas 0 a 3)"):
-                            response = agent.query_data(question)
-                            st.success("✅ Resposta Final do Agente:")
-                            st.write(response)
-                    else:
-                        st.warning("Por favor, digite uma pergunta.")
+            # Input da pergunta
+            question = st.text_area(
+                "Sua pergunta:",
+                value=st.session_state.get('question', ''),
+                height=100,
+                placeholder="Digite sua pergunta sobre os dados..."
+            )
+            if st.button("🔍 Analisar", type="primary"):
+                if question:
+                    with st.spinner("🤖 Agente pensando... (Etapas 0 a 3)"):
+                        response = agent.query_data(question)
+                        st.success("✅ Resposta Final do Agente:")
+                        st.write(response)
+                else:
+                    st.warning("Por favor, digite uma pergunta.")
     
-        else:
-            st.info("👆 Faça upload de um arquivo CSV ou ZIP contendo CSVs para começar")
+    else:
+        st.info("👆 Faça upload de um arquivo CSV ou ZIP contendo CSVs para começar")
         
-            # Instruções
-            with st.expander("📖 Como usar"):
-                st.write("""
-                **Sistema em 3 Etapas:**
+        # Instruções
+        with st.expander("📖 Como usar"):
+            st.write("""
+            **Sistema em 3 Etapas:**
             
-                1. **📝 Pergunta:** Você faz uma pergunta em linguagem natural
-                2. **🧠 Interpretação:** LLM analisa e gera código Python específico
-                3. **⚡ Execução:** Código é executado no dataset real
-                4. **💬 Resposta:** LLM transforma o resultado em resposta clara
+            1. **📝 Pergunta:** Você faz uma pergunta em linguagem natural
+            2. **🧠 Interpretação:** LLM analisa e gera código Python específico
+            3. **⚡ Execução:** Código é executado no dataset real
+            4. **💬 Resposta:** LLM transforma o resultado em resposta clara
             
-                **Vantagens desta abordagem:**
-                - ✅ Maior precisão nas respostas
-                - ✅ Transparência total (você vê o código gerado)
-                - ✅ Menos erros de parsing
-                - ✅ Resultados baseados nos dados reais
+            **Vantagens desta abordagem:**
+            - ✅ Maior precisão nas respostas
+            - ✅ Transparência total (você vê o código gerado)
+            - ✅ Menos erros de parsing
+            - ✅ Resultados baseados nos dados reais
             
-                **Exemplos de perguntas suportadas:**
-                - Quantas linhas tem o dataset?
-                - Qual é o maior valor na coluna X?
-                - Mostre estatísticas descritivas
-                - Qual categoria tem mais itens?
-                - Some os valores da coluna Y
-                """)
+            **Exemplos de perguntas suportadas:**
+            - Quantas linhas tem o dataset?
+            - Qual é o maior valor na coluna X?
+            - Mostre estatísticas descritivas
+            - Qual categoria tem mais itens?
+            - Some os valores da coluna Y
+            """)
 
-    # Configuração para executar
-    if __name__ == "__main__":
-        # Instruções de instalação
-        st.sidebar.markdown("""
-        ### 🛠️ Pré-requisitos
+# Configuração para executar
+if __name__ == "__main__":
+    # Instruções de instalação
+    st.sidebar.markdown("""
+    ### 🛠️ Pré-requisitos
     
-        **Instalar dependências:**
-        ```bash
-        pip install streamlit langchain pandas
-        ```
-        """)
+    **Instalar dependências:**
+    ```bash
+    pip install streamlit langchain pandas
+    ```
+    """)
+    
     main()
