@@ -158,7 +158,7 @@ Sua tarefa: gerar frase em pt de dados: {formatted_result}"""
 
 if __name__ == "__main__":
     st.sidebar.markdown("PRÉ-REQUISITOS: pip install requests ...")
-    def main():   
+def main():   
     st.title("🤖 Agente Inteligente para Análise de CSV")
     st.markdown("### 🔄 Sistema em 3 Etapas: Pergunta → Código → Execução → Resposta")
     
