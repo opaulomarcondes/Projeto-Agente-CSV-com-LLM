@@ -14,7 +14,13 @@ import re
 import ast
 import textwrap
 
-# --- Cliente LLM via OpenRouter ---
+def main():
+    st.set_page_config(
+        page_title="Agente de Análise CSV",
+        page_icon="📊",
+        layout="wide"
+    )
+
 class OpenRouterLLM:
     def __init__(self, model: str, api_key: str = None, temperature: float = 0.0):
         self.endpoint = "https://openrouter.ai/api/v1/chat/completions"
@@ -38,14 +44,6 @@ class OpenRouterLLM:
         resp.raise_for_status()
         data = resp.json()
         return data["choices"][0]["message"]["content"]
-
-
-def main():
-    st.set_page_config(
-        page_title="Agente de Análise CSV",
-        page_icon="📊",
-        layout="wide"
-    )
 
 class CSVAnalysisAgent:
     def __init__(self):
