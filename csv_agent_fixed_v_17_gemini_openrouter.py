@@ -342,20 +342,7 @@ if __name__ == "__main__":
     
     **Instalar dependências:**
     ```bash
-    pip install streamlit langchain pandas ollama
-    ```
-    
-    **Instalar Ollama (LLM gratuita):**
-    ```bash
-    # Linux/Mac
-    curl -fsSL https://ollama.ai/install.sh | sh
-    
-    # Windows: baixar do site ollama.ai
-    ```
-    
-    **Baixar modelo:**
-    ```bash
-    ollama run llama3.2:3b
+    pip install streamlit langchain pandas
     ```
     """)
     main()
