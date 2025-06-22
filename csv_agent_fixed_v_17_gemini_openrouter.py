@@ -42,7 +42,7 @@ class CSVAnalysisAgent:
         """Inicializa o agente com LLM via OpenRouter"""
         try:
             self.llm = OpenRouterLLM(
-                model="openrouter/deepseek-chat-v3-0324:free",
+                model="deepseek/deepseek-chat-v3-0324:free",
                 api_key=os.getenv("OPENROUTER_API_KEY"),
                 temperature=0.0
             )
