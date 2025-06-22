@@ -156,20 +156,20 @@ Sua tarefa: gerar frase em pt de dados: {formatted_result}"""
 
     # demais métodos inalterados
 
-if __name__ == "__main__":
-    st.sidebar.markdown("PRÉ-REQUISITOS: pip install requests ...")
+        if __name__ == "__main__":
+            st.sidebar.markdown("PRÉ-REQUISITOS: pip install requests ...")
     def main():   
        st.title("🤖 Agente Inteligente para Análise de CSV")
        st.markdown("### 🔄 Sistema em 3 Etapas: Pergunta → Código → Execução → Resposta")
     
         # Inicializa o agente
- if 'agent' not in st.session_state:
+        if 'agent' not in st.session_state:
             st.session_state.agent = CSVAnalysisAgent()
     
         agent = st.session_state.agent
     
-     # Sidebar para upload e configuração
-with st.sidebar:
+        # Sidebar para upload e configuração
+        with st.sidebar:
             st.header("📁 Carregar Dados")
         
             # Upload de arquivo
@@ -179,22 +179,22 @@ with st.sidebar:
                 help="Aceita arquivos ZIP contendo CSVs ou arquivos CSV individuais"
             )
         
-            if uploaded_file:
-                # Cria diretório temporário
-                temp_dir = tempfile.mkdtemp()
+        if uploaded_file:
+            # Cria diretório temporário
+            temp_dir = tempfile.mkdtemp()
             
-                try:
-                    if uploaded_file.name.endswith('.zip'):
-                        # Salva arquivo ZIP
-                        zip_path = os.path.join(temp_dir, uploaded_file.name)
-                        with open(zip_path, 'wb') as f:
-                            f.write(uploaded_file.getbuffer())
+            try:
+                if uploaded_file.name.endswith('.zip'):
+                    # Salva arquivo ZIP
+                    zip_path = os.path.join(temp_dir, uploaded_file.name)
+                    with open(zip_path, 'wb') as f:
+                        f.write(uploaded_file.getbuffer())
                     
                         # Descompacta
                         extract_dir = os.path.join(temp_dir, 'extracted')
-                        if agent.extract_zip_files(zip_path, extract_dir):
-                            # Carrega CSVs
-                            agent.dataframes = agent.load_csv_files(extract_dir)
+                    if agent.extract_zip_files(zip_path, extract_dir):
+                        # Carrega CSVs
+                        agent.dataframes = agent.load_csv_files(extract_dir)
                     else:
                         # Arquivo CSV individual
                         csv_path = os.path.join(temp_dir, uploaded_file.name)
@@ -204,7 +204,7 @@ with st.sidebar:
                 
                     st.success(f"Carregados {len(agent.dataframes)} arquivo(s) CSV")
                 
-                except Exception as e:
+                    except Exception as e:
                     st.error(f"Erro ao processar arquivo: {e}")
     
         # Interface principal
