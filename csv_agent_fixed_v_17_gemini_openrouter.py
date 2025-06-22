@@ -11,14 +11,15 @@ import locale
 import re
 
 # --- Cliente LLM via OpenRouter ---
-class OpenRouterLLM:
-    def __init__(self, model: str="deepseek/deepseek-chat-v3-0324:free", api_key: str = None, temperature: float = 0.0):
+class OpenRouterLLM:      
+    def __init__(self, model: str = None, api_key: str = None, temperature: float = 0.0):
+        # Modelo padrão se não for especificado
+        self.model = model or "deepseek/deepseek-chat-v3-0324:free"
         self.endpoint = "https://openrouter.ai/api/v1/chat/completions"
-        self.model = model
         self.api_key = api_key or os.getenv("OPENROUTER_API_KEY")
         self.temperature = temperature
         if not self.api_key:
-            raise ValueError("Chave OPENROUTER_API_KEY não encontrada no ambiente.")
+            raise ValueError("Chave OPENROUTER_API_KEY não encontrada no ambiente. Configure corretamente.")
 
     def invoke(self, prompt: str) -> str:
         payload = {
