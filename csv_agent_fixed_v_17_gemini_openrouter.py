@@ -160,7 +160,7 @@ if __name__ == "__main__":
     st.sidebar.markdown("PRÉ-REQUISITOS: pip install requests ...")
     def main():   
        st.title("🤖 Agente Inteligente para Análise de CSV")
-    st.markdown("### 🔄 Sistema em 3 Etapas: Pergunta → Código → Execução → Resposta")
+       st.markdown("### 🔄 Sistema em 3 Etapas: Pergunta → Código → Execução → Resposta")
     
         # Inicializa o agente
  if 'agent' not in st.session_state:
