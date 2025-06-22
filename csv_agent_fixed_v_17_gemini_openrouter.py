@@ -163,49 +163,49 @@ Sua tarefa: gerar frase em pt de dados: {formatted_result}"""
        st.markdown("### 🔄 Sistema em 3 Etapas: Pergunta → Código → Execução → Resposta")
     
         # Inicializa o agente
-        if 'agent' not in st.session_state:
+    if 'agent' not in st.session_state:
             st.session_state.agent = CSVAnalysisAgent()
     
         agent = st.session_state.agent
     
         # Sidebar para upload e configuração
-        with st.sidebar:
-            st.header("📁 Carregar Dados")
+    with st.sidebar:
+        st.header("📁 Carregar Dados")
         
-            # Upload de arquivo
-            uploaded_file = st.file_uploader(
-                "Faça upload de arquivo ZIP ou CSV",
-                type=['zip', 'csv'],
-                help="Aceita arquivos ZIP contendo CSVs ou arquivos CSV individuais"
-            )
+        # Upload de arquivo
+        uploaded_file = st.file_uploader(
+        "Faça upload de arquivo ZIP ou CSV",
+        type=['zip', 'csv'],
+        help="Aceita arquivos ZIP contendo CSVs ou arquivos CSV individuais"
+        )
         
-        if uploaded_file:
+    if uploaded_file:
             # Cria diretório temporário
             temp_dir = tempfile.mkdtemp()
             
-            try:
-                if uploaded_file.name.endswith('.zip'):
-                    # Salva arquivo ZIP
-                    zip_path = os.path.join(temp_dir, uploaded_file.name)
-                    with open(zip_path, 'wb') as f:
-                        f.write(uploaded_file.getbuffer())
+    try:
+        if uploaded_file.name.endswith('.zip'):
+            # Salva arquivo ZIP
+            zip_path = os.path.join(temp_dir, uploaded_file.name)
+        with open(zip_path, 'wb') as f:
+            f.write(uploaded_file.getbuffer())
                     
-                        # Descompacta
-                        extract_dir = os.path.join(temp_dir, 'extracted')
-                    if agent.extract_zip_files(zip_path, extract_dir):
-                        # Carrega CSVs
-                        agent.dataframes = agent.load_csv_files(extract_dir)
-                    else:
-                        # Arquivo CSV individual
-                        csv_path = os.path.join(temp_dir, uploaded_file.name)
-                        with open(csv_path, 'wb') as f:
-                            f.write(uploaded_file.getbuffer())
-                        agent.dataframes = agent.load_csv_files(temp_dir)
+            # Descompacta
+            extract_dir = os.path.join(temp_dir, 'extracted')
+        if agent.extract_zip_files(zip_path, extract_dir):
+            # Carrega CSVs
+            agent.dataframes = agent.load_csv_files(extract_dir)
+        else:
+            # Arquivo CSV individual
+            csv_path = os.path.join(temp_dir, uploaded_file.name)
+        with open(csv_path, 'wb') as f:
+            f.write(uploaded_file.getbuffer())
+            agent.dataframes = agent.load_csv_files(temp_dir)
                 
-                    st.success(f"Carregados {len(agent.dataframes)} arquivo(s) CSV")
+        st.success(f"Carregados {len(agent.dataframes)} arquivo(s) CSV")
                 
-                    except Exception as e:
-                    st.error(f"Erro ao processar arquivo: {e}")
+        except Exception as e:
+        st.error(f"Erro ao processar arquivo: {e}")
     
         # Interface principal
         if agent.dataframes:
