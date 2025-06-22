@@ -12,7 +12,7 @@ import re
 
 # --- Cliente LLM via OpenRouter ---
 class OpenRouterLLM:
-    def __init__(self, model: str, api_key: str = None, temperature: float = 0.0):
+    def __init__(self, model: str="deepseek/deepseek-chat-v3-0324:free", api_key: str = None, temperature: float = 0.0):
         self.endpoint = "https://openrouter.ai/api/v1/chat/completions"
         self.model = model
         self.api_key = api_key or os.getenv("OPENROUTER_API_KEY")
